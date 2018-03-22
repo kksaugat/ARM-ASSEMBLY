@@ -1,0 +1,928 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             GPIO, CODE, READWRITE
+    3 00000000                 EXPORT           lab4
+    4 00000000                 EXTERN           pin_connect_block_setup_for_uar
+t0
+    5 00000000                 EXTERN           uart_init
+    6 00000000                 EXTERN           read_character
+    7 00000000                 EXTERN           output_character
+    8 00000000                 EXTERN           read_string
+    9 00000000                 EXTERN           output_string
+   10 00000000                 EXTERN           illuminate_RGB_LED
+   11 00000000                 EXTERN           string_to_int
+   12 00000000                 EXTERN           seven_segment
+   13 00000000                 EXTERN           reverse_bits
+   14 00000000                 EXPORT           setup_rgb
+   15 00000000                 EXPORT           setup_LEDS___Pbuttons
+   16 00000000                 EXPORT           setup_digitset
+   17 00000000         
+   18 00000000 00000008 
+                       PIODATA EQU              0x8         ; Offset to paralle
+                                                            
+   19 00000000         ;Pin block initialization                               
+                                                              
+   20 00000000 E002C000 
+                       PINSEL0 EQU              0xE002C000
+   21 00000000 E0028008 
+                       IO0DIR  EQU              0xE0028008
+   22 00000000 E0028018 
+                       IO1DIR  EQU              0xE0028018
+   23 00000000 E0028004 
+                       IO0SET  EQU              0xE0028004
+   24 00000000 E0028014 
+                       IO1SET  EQU              0xE0028014
+   25 00000000 E002800C 
+                       IO0CLR  EQU              0xE002800C
+   26 00000000 E002801C 
+                       IO1CLR  EQU              0xE002801C
+   27 00000000 E0028000 
+                       IO0PIN  EQU              0xE0028000
+   28 00000000 E0028010 
+                       IO1PIN  EQU              0xE0028010
+   29 00000000 00000000 
+                       stringaddress
+                               DCD              0x000000000
+   30 00000004         
+   31 00000004 0A 0D 57 
+              65 4C 63 
+              6F 6D 65 
+              20 74 6F 
+              20 4C 61 
+              62 34 2E 
+              20 43 68 
+              6F 6F 73 
+              65 20 74 
+              68 65 20 
+              6F 70 74 
+              69 6F 6E 
+              73 20 66 
+              72 6F 6D 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+              20 62 65 
+              6C 6F 77 
+              2E 0A 0D 
+              20 00    prompt  =                "\n\rWeLcome to Lab4. Choose th
+e options from below.\n\r ",0 
+                                                            ; 
+   32 00000039 00 00 00        ALIGN
+   33 0000003C 50 72 65 
+              73 73 20 
+              27 64 27 
+              20 66 6F 
+              72 20 37 
+              2D 73 65 
+              67 2E 0A 
+              0D 50 72 
+              65 73 73 
+              27 6C 27 
+              20 66 6F 
+              72 20 69 
+              6C 6C 75 
+              6D 6E 69 
+              61 74 69 
+              6E 67 20 
+              4C 45 44 
+              2E 0A 0D 
+              50 72 65 
+              73 73 20 
+              27 72 27 
+              20 66 6F 
+              72 20 52 
+              47 42 20 
+              4C 65 64 
+              2E 0A 0D 
+              41 66 74 
+              65 72 20 
+              74 65 73 
+              74 69 6E 
+              67 2C 69 
+              74 20 77 
+              69 6C 6C 
+              20 74 61 
+              6B 65 20 
+              79 6F 75 
+              20 62 61 
+              63 6B 20 
+              74 6F 20 
+              6D 61 69 
+              6E 20 6D 
+              65 6E 75 
+              20 61 6E 
+              64 20 70 
+              72 65 73 
+              73 20 74 
+              68 65 20 
+              63 68 61 
+              72 61 63 
+              74 65 72 
+              20 61 67 
+              61 69 6E 
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+              0A 0D 50 
+              72 65 73 
+              73 20 71 
+              20 74 6F 
+              20 71 75 
+              69 74 2E 
+              20 54 68 
+              61 6E 6B 
+              20 79 6F 
+              75 20 20 
+              00       choose  =                "Press 'd' for 7-seg.\n\rPress'
+l' for illumniating LED.\n\rPress 'r' for RGB Led.\n\rAfter testing,it will tak
+e you back to main menu and press the character again\n\rPress q to quit. Thank
+ you  " ,0
+   34 000000F7 00              ALIGN
+   35 000000F8 0A 0D 45 
+              6E 74 65 
+              72 20 61 
+              20 68 65 
+              78 20 6E 
+              75 6D 62 
+              65 72 20 
+              66 72 6F 
+              6D 20 27 
+              30 2D 46 
+              27 20 74 
+              68 65 6E 
+              20 63 68 
+              65 63 6B 
+              20 74 68 
+              65 20 64 
+              69 73 70 
+              6C 61 79 
+              2E 0A 0D 
+              50 6C 65 
+              61 73 65 
+              20 74 6F 
+              20 6F 75 
+              74 70 75 
+              74 20 66 
+              72 6F 6D 
+              20 27 41 
+              27 20 74 
+              6F 20 27 
+              46 27 20 
+              63 61 70 
+              73 20 6F 
+              6E 20 69 
+              73 20 6E 
+              65 65 64 
+              65 64 2E 
+              0A 0D 50 
+              6C 65 61 
+              73 65 20 
+              70 72 65 
+              73 73 20 
+              43 61 70 
+              73 6C 6F 
+              63 6B 20 
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+              61 67 61 
+              69 6E 20 
+              74 6F 20 
+              74 65 73 
+              74 20 6F 
+              74 68 65 
+              72 20 6F 
+              70 74 69 
+              6F 6E 73 
+              20 61 66 
+              74 65 72 
+              20 74 65 
+              73 74 69 
+              6E 67 20 
+              27 41 27 
+              2D 27 46 
+              27 0A 0D 
+              20 20 00 seven_seg
+                               =                "\n\rEnter a hex number from '0
+-F' then check the display.\n\rPlease to output from 'A' to 'F' caps on is need
+ed.\n\rPlease press Capslock again to test other options after testing 'A'-'F'\
+n\r  ",0
+   36 000001B2 00 00           ALIGN
+   37 000001B4 0A 0D 50 
+              72 65 73 
+              73 20 27 
+              72 27 20 
+              66 6F 72 
+              20 72 65 
+              64 2E 0A 
+              0D 50 72 
+              65 73 73 
+              20 27 67 
+              27 20 66 
+              6F 72 20 
+              67 72 65 
+              65 6E 2E 
+              0A 0D 50 
+              72 65 73 
+              73 20 27 
+              62 27 20 
+              66 6F 72 
+              20 62 6C 
+              75 65 0A 
+              0D 50 72 
+              65 73 73 
+              20 27 70 
+              27 20 66 
+              6F 72 20 
+              70 75 72 
+              70 6C 65 
+              20 61 6E 
+              64 20 27 
+              77 27 20 
+              66 6F 72 
+              20 77 68 
+              69 74 65 
+              2E 0A 0D 
+              50 72 65 
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+              73 73 20 
+              79 20 66 
+              6F 72 20 
+              79 65 6C 
+              6C 6F 77 
+              0A 0D 43 
+              68 65 63 
+              6B 20 74 
+              68 65 20 
+              6C 69 67 
+              68 74 73 
+              20 00    colors  =                "\n\rPress 'r' for red.\n\rPres
+s 'g' for green.\n\rPress 'b' for blue\n\rPress 'p' for purple and 'w' for whit
+e.\n\rPress y for yellow\n\rCheck the lights ",0
+   38 00000243 00              ALIGN
+   39 00000244         
+   40 00000244 0A 0D 45 
+              6E 74 65 
+              72 20 6E 
+              75 6D 62 
+              65 72 73 
+              20 66 72 
+              6F 6D 20 
+              30 2D 31 
+              35 20 74 
+              6F 20 62 
+              65 20 64 
+              69 73 70 
+              6C 61 79 
+              65 64 20 
+              69 6E 20 
+              4C 45 44 
+              20 61 6E 
+              64 20 68 
+              69 74 20 
+              65 6E 74 
+              65 72 20 
+              00       LEDS    =                "\n\rEnter numbers from 0-15 to
+ be displayed in LED and hit enter ",0
+   41 00000284                 ALIGN
+   42 00000284         
+   43 00000284 0A 0D 48 
+              61 76 65 
+              20 61 20 
+              6E 69 63 
+              65 20 64 
+              61 79 00 Quit    =                "\n\rHave a nice day",0
+   44 00000296 00 00           ALIGN
+   45 00000298         
+   46 00000298         lab4
+   47 00000298 E92D4003        STMFD            SP!,{r0,r1,lr} ; Store register
+                                                            
+   48 0000029C         
+   49 0000029C E59F4190        LDR              r4,=prompt
+   50 000002A0 EBFFFFFE        BL               output_string
+   51 000002A4 E3A0000A        MOV              r0,#0x0A
+   52 000002A8 EBFFFFFE        BL               output_character
+   53 000002AC E3A0000D        MOV              r0,#0x0D
+   54 000002B0 EBFFFFFE        BL               output_character
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+   55 000002B4 E59F417C        LDR              r4,=choose
+   56 000002B8 EBFFFFFE        BL               output_string
+   57 000002BC E3A0000A        MOV              r0,#0x0A
+   58 000002C0 EBFFFFFE        BL               output_character
+   59 000002C4 E3A0000D        MOV              r0,#0x0D
+   60 000002C8 EBFFFFFE        BL               output_character
+   61 000002CC EBFFFFFE        BL               read_character
+   62 000002D0 E3500064        CMP              r0,#0x64    ; if 'd' then branc
+                                                            h to display the di
+                                                            git
+   63 000002D4 0A00001D        BEQ              display_digit_on_7_seg
+   64 000002D8 E3500071        CMP              r0,#0x71    ; if 'q' then quit 
+                                                            the program
+   65 000002DC 0A000052        BEQ              quit
+   66 000002E0 E350006C        CMP              r0,#0x6c    ; if 'l' illuminate
+                                                             the led
+   67 000002E4 0A00003C        BEQ              illuminate_LED
+   68 000002E8 E3500072        CMP              r0,#0x72    ; if 'r' go to rgb
+   69 000002EC 0A00002A        BEQ              rgb_LED
+   70 000002F0         
+   71 000002F0 E8BD4003        LDMFD            SP!, {r0,r1,lr} ; 
+   72 000002F4 E12FFF1E        BX               LR
+   73 000002F8         
+   74 000002F8         
+   75 000002F8         setup_rgb
+   76 000002F8 E92D4000        STMFD            sp!,{lr}
+   77 000002FC E59F4138        LDR              r4,=IO0DIR  ; address of IO0DIR
+                                                             to r4;
+   78 00000300 E5940000        LDR              r0,[r4]     ; load the value to
+                                                             r0
+   79 00000304 E3800826        ORR              r0,r0,#0x260000 ; setting bits 
+                                                            pins p0 17,18,21 fo
+                                                            r rgb (output)
+   80 00000308 E5840000        STR              r0,[r4]     ; store it to r0
+   81 0000030C E8BD4000        LDMFD            sp!, {lr}
+   82 00000310 E12FFF1E        BX               lr
+   83 00000314         setup_LEDS___Pbuttons
+   84 00000314 E92D4000        STMFD            sp!,{lr}
+   85 00000318 E59F4120        LDR              r4,=IO1DIR  ; address of I01DIR
+                                                             for push button an
+                                                            d LEDs
+   86 0000031C E5940000        LDR              r0,[r4]
+   87 00000320 E380080F        ORR              r0,r0,#0xf0000 ; setting bits o
+                                                            f port 1 pins 16-19
+                                                             for LEDs 
+   88 00000324 E3C0060F        BIC              r0,r0,#0xf00000 ; clearing bits
+                                                             of port 1 pins 20-
+                                                            23 for Push Buttons
+                                                            (input)
+   89 00000328 E5840000        STR              r0,[r4]     ; store it to r0
+   90 0000032C E8BD4000        LDMFD            sp!, {lr}
+   91 00000330 E12FFF1E        BX               lr
+   92 00000334         
+   93 00000334         setup_digitset
+   94 00000334 E92D4000        STMFD            sp!,{lr}
+   95 00000338 E59F40FC        LDR              r4,=IO0DIR  ; address of IO0DIR
+                                                             ro r4
+   96 0000033C E59F2100        LDR              r2,=0x26B784 ; port 0 pin 2 the
+                                                            n the segments pins
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+                                                             to 1 
+   97 00000340 E1800002        ORR              r0,r0,r2    ; set the bits 
+   98 00000344 E5840000        STR              r0,[r4]     ; store it into r0
+   99 00000348 E8BD4000        LDMFD            sp!,{lr}
+  100 0000034C E12FFF1E        BX               lr
+  101 00000350         
+  102 00000350         display_digit_on_7_seg
+  103 00000350 E92D4000        STMFD            SP!,{lr}    ; Store registers o
+                                                            n stack
+  104 00000354 E59F40EC        LDR              r4,= seven_seg 
+                                                            ; load the prompt
+  105 00000358 EBFFFFFE        BL               output_string
+  106 0000035C E59F40E8        LDR              r4,=stringaddress
+  107 00000360 EBFFFFFE        BL               read_character
+  108 00000364 EBFFFFFE        BL               output_character
+  109 00000368 E3500039        CMP              r0,#0x39    ; is the value less
+                                                             than 9?
+  110 0000036C DA000003        BLE              sub1        ; if its go to sub1
+                                                            
+  111 00000370 0A000002        BEQ              sub1        ;  if its equal to 
+                                                            9 then go to sub1
+  112 00000374         sub0
+  113 00000374 E2400041        SUB              r0,r0,#0x41 ; if the values are
+                                                            'A' TO 'F' subtract
+                                                             by its ascii then 
+                                                            add 10 to output th
+                                                            e ascii
+  114 00000378 E280000A        ADD              r0,r0,#10   ;  (A = 0x41) so 0x
+                                                            41-0x41 + 10 = A an
+                                                            d so on
+  115 0000037C EA000000        B                done_display
+  116 00000380         sub1
+  117 00000380 E2400030        SUB              r0,r0,#0x30 ; if the values are
+                                                             just 0-9 then just
+                                                             subtract from 0 in
+                                                             ascii 
+  118 00000384         
+  119 00000384         done_display
+  120 00000384 E59F10C4        LDR              r1,=IO0CLR  ; load the base add
+                                                            ress
+  121 00000388 E59F20C4        LDR              r2,=0xB780  ; to clear the disp
+                                                            lay setting 1 to se
+                                                            gment pins
+  122 0000038C E5812000        STR              r2,[r1]
+  123 00000390 EBFFFFFE        BL               seven_segment ; branch to displ
+                                                            ay the digits accor
+                                                            dingly
+  124 00000394 E8BD4000        LDMFD            SP!, {lr}   ; Restore regis
+  125 00000398 E12FFF1E        BX               LR
+  126 0000039C         
+  127 0000039C         
+  128 0000039C         rgb_LED
+  129 0000039C E92D401F        STMFD            SP!, {lr, r0-r4}
+  130 000003A0 E59F10B0        LDR              r1, =IO0SET ; load the base add
+                                                            ress 
+  131 000003A4 E5910000        LDR              r0,[r1]
+  132 000003A8 E3800826        ORR              r0,r0,#0x00260000 ; 1 to turn o
+                                                            n the pin 17,18,21
+  133 000003AC E5810000        STR              r0,[r1]
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  134 000003B0 E59F40A4 
+                       again   LDR              r4,=colors
+  135 000003B4 EBFFFFFE        BL               output_string
+  136 000003B8 E3A0000A        MOV              r0,#0x0A
+  137 000003BC EBFFFFFE        BL               output_character
+  138 000003C0 E3A0000D        MOV              r0,#0x0D
+  139 000003C4 EBFFFFFE        BL               output_character
+  140 000003C8 E59F407C        LDR              r4,=stringaddress
+  141 000003CC EBFFFFFE        BL               read_character
+  142 000003D0 EBFFFFFE        BL               illuminate_RGB_LED ; illumiate 
+                                                            according to the co
+                                                            lor you want
+  143 000003D4 E8BD401F        LDMFD            SP!, {lr, r0-r4}
+  144 000003D8 E12FFF1E        BX               lr
+  145 000003DC         
+  146 000003DC         
+  147 000003DC         
+  148 000003DC         
+  149 000003DC         illuminate_LED
+  150 000003DC E92D4000        STMFD            SP!, {lr}
+  151 000003E0 E59F2078        LDR              r2,=IO1SET  ; Load the address 
+                                                            of I01SET
+  152 000003E4 E5920000        LDR              r0,[r2]     ; LOAD THE value to
+                                                             r0
+  153 000003E8 E380080F        ORR              r0,r0,#0xf0000 
+                                                            ; PORT 1 16-19 TO 1
+                                                            
+  154 000003EC E5820000        STR              r0,[r2]     ; STORE IT in r0
+  155 000003F0         
+  156 000003F0 E59F406C        LDR              r4,=LEDS
+  157 000003F4 EBFFFFFE        BL               output_string
+  158 000003F8 E59F404C        LDR              r4,=stringaddress
+  159 000003FC EBFFFFFE        BL               read_string
+  160 00000400 EBFFFFFE        BL               string_to_int ; conver the stri
+                                                            ng to int
+  161 00000404 E1A00001        MOV              r0,r1
+  162 00000408 EBFFFFFE        BL               reverse_bits 
+                                                            ; reverse the bits 
+                                                            
+  163 0000040C E1A01000        MOV              r1,r0
+  164 00000410 E59F2050        LDR              r2,=IO1CLR  ; load the address 
+                                                            of I01CLR
+  165 00000414 E5920000        LDR              r0,[r2]
+  166 00000418 E1800801        ORR              r0,r0,r1,LSL #16 ; move to get 
+                                                            to p1.16
+  167 0000041C E5820000        STR              r0,[r2]     ; store the value i
+                                                            n r0 
+  168 00000420 EAFFFFFE        B                lab4
+  169 00000424         
+  170 00000424 E8BD4000        LDMFD            SP!,{ lr}
+  171 00000428 E12FFF1E        BX               LR
+  172 0000042C         
+  173 0000042C         
+  174 0000042C         
+  175 0000042C         quit
+  176 0000042C E59F4038        LDR              r4,=Quit
+  177 00000430 EBFFFFFE        BL               output_string
+  178 00000434                 END
+              00000000 
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+              00000000 
+              E0028008 
+              E0028018 
+              0026B784 
+              00000000 
+              00000000 
+              E002800C 
+              0000B780 
+              E0028004 
+              00000000 
+              E0028014 
+              00000000 
+              E002801C 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\o
+bjects\lab4.d -o.\objects\lab4.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMS
+IS\Include -IC:\Keil_v5\ARM\INC\Philips --predefine="__EVAL SETA 1" --predefine
+="__UVISION_VERSION SETA 524" --list=.\listings\lab4.lst lab4.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+GPIO 00000000
+
+Symbol: GPIO
+   Definitions
+      At line 2 in file lab4.s
+   Uses
+      None
+Comment: GPIO unused
+LEDS 00000244
+
+Symbol: LEDS
+   Definitions
+      At line 40 in file lab4.s
+   Uses
+      At line 156 in file lab4.s
+Comment: LEDS used once
+Quit 00000284
+
+Symbol: Quit
+   Definitions
+      At line 43 in file lab4.s
+   Uses
+      At line 176 in file lab4.s
+Comment: Quit used once
+again 000003B0
+
+Symbol: again
+   Definitions
+      At line 134 in file lab4.s
+   Uses
+      None
+Comment: again unused
+choose 0000003C
+
+Symbol: choose
+   Definitions
+      At line 33 in file lab4.s
+   Uses
+      At line 55 in file lab4.s
+Comment: choose used once
+colors 000001B4
+
+Symbol: colors
+   Definitions
+      At line 37 in file lab4.s
+   Uses
+      At line 134 in file lab4.s
+Comment: colors used once
+display_digit_on_7_seg 00000350
+
+Symbol: display_digit_on_7_seg
+   Definitions
+      At line 102 in file lab4.s
+   Uses
+      At line 63 in file lab4.s
+Comment: display_digit_on_7_seg used once
+done_display 00000384
+
+Symbol: done_display
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 119 in file lab4.s
+   Uses
+      At line 115 in file lab4.s
+Comment: done_display used once
+illuminate_LED 000003DC
+
+Symbol: illuminate_LED
+   Definitions
+      At line 149 in file lab4.s
+   Uses
+      At line 67 in file lab4.s
+Comment: illuminate_LED used once
+lab4 00000298
+
+Symbol: lab4
+   Definitions
+      At line 46 in file lab4.s
+   Uses
+      At line 3 in file lab4.s
+      At line 168 in file lab4.s
+
+prompt 00000004
+
+Symbol: prompt
+   Definitions
+      At line 31 in file lab4.s
+   Uses
+      At line 49 in file lab4.s
+Comment: prompt used once
+quit 0000042C
+
+Symbol: quit
+   Definitions
+      At line 175 in file lab4.s
+   Uses
+      At line 65 in file lab4.s
+Comment: quit used once
+rgb_LED 0000039C
+
+Symbol: rgb_LED
+   Definitions
+      At line 128 in file lab4.s
+   Uses
+      At line 69 in file lab4.s
+Comment: rgb_LED used once
+setup_LEDS___Pbuttons 00000314
+
+Symbol: setup_LEDS___Pbuttons
+   Definitions
+      At line 83 in file lab4.s
+   Uses
+      At line 15 in file lab4.s
+Comment: setup_LEDS___Pbuttons used once
+setup_digitset 00000334
+
+Symbol: setup_digitset
+   Definitions
+      At line 93 in file lab4.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+   Uses
+      At line 16 in file lab4.s
+Comment: setup_digitset used once
+setup_rgb 000002F8
+
+Symbol: setup_rgb
+   Definitions
+      At line 75 in file lab4.s
+   Uses
+      At line 14 in file lab4.s
+Comment: setup_rgb used once
+seven_seg 000000F8
+
+Symbol: seven_seg
+   Definitions
+      At line 35 in file lab4.s
+   Uses
+      At line 104 in file lab4.s
+Comment: seven_seg used once
+stringaddress 00000000
+
+Symbol: stringaddress
+   Definitions
+      At line 29 in file lab4.s
+   Uses
+      At line 106 in file lab4.s
+      At line 140 in file lab4.s
+      At line 158 in file lab4.s
+
+sub0 00000374
+
+Symbol: sub0
+   Definitions
+      At line 112 in file lab4.s
+   Uses
+      None
+Comment: sub0 unused
+sub1 00000380
+
+Symbol: sub1
+   Definitions
+      At line 116 in file lab4.s
+   Uses
+      At line 110 in file lab4.s
+      At line 111 in file lab4.s
+
+20 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+IO0CLR E002800C
+
+Symbol: IO0CLR
+   Definitions
+      At line 25 in file lab4.s
+   Uses
+      At line 120 in file lab4.s
+Comment: IO0CLR used once
+IO0DIR E0028008
+
+Symbol: IO0DIR
+   Definitions
+      At line 21 in file lab4.s
+   Uses
+      At line 77 in file lab4.s
+      At line 95 in file lab4.s
+
+IO0PIN E0028000
+
+Symbol: IO0PIN
+   Definitions
+      At line 27 in file lab4.s
+   Uses
+      None
+Comment: IO0PIN unused
+IO0SET E0028004
+
+Symbol: IO0SET
+   Definitions
+      At line 23 in file lab4.s
+   Uses
+      At line 130 in file lab4.s
+Comment: IO0SET used once
+IO1CLR E002801C
+
+Symbol: IO1CLR
+   Definitions
+      At line 26 in file lab4.s
+   Uses
+      At line 164 in file lab4.s
+Comment: IO1CLR used once
+IO1DIR E0028018
+
+Symbol: IO1DIR
+   Definitions
+      At line 22 in file lab4.s
+   Uses
+      At line 85 in file lab4.s
+Comment: IO1DIR used once
+IO1PIN E0028010
+
+Symbol: IO1PIN
+   Definitions
+      At line 28 in file lab4.s
+   Uses
+      None
+Comment: IO1PIN unused
+IO1SET E0028014
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: IO1SET
+   Definitions
+      At line 24 in file lab4.s
+   Uses
+      At line 151 in file lab4.s
+Comment: IO1SET used once
+PINSEL0 E002C000
+
+Symbol: PINSEL0
+   Definitions
+      At line 20 in file lab4.s
+   Uses
+      None
+Comment: PINSEL0 unused
+PIODATA 00000008
+
+Symbol: PIODATA
+   Definitions
+      At line 18 in file lab4.s
+   Uses
+      None
+Comment: PIODATA unused
+10 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+illuminate_RGB_LED 00000000
+
+Symbol: illuminate_RGB_LED
+   Definitions
+      At line 10 in file lab4.s
+   Uses
+      At line 142 in file lab4.s
+Comment: illuminate_RGB_LED used once
+output_character 00000000
+
+Symbol: output_character
+   Definitions
+      At line 7 in file lab4.s
+   Uses
+      At line 52 in file lab4.s
+      At line 54 in file lab4.s
+      At line 58 in file lab4.s
+      At line 60 in file lab4.s
+      At line 108 in file lab4.s
+      At line 137 in file lab4.s
+      At line 139 in file lab4.s
+
+output_string 00000000
+
+Symbol: output_string
+   Definitions
+      At line 9 in file lab4.s
+   Uses
+      At line 50 in file lab4.s
+      At line 56 in file lab4.s
+      At line 105 in file lab4.s
+      At line 135 in file lab4.s
+      At line 157 in file lab4.s
+      At line 177 in file lab4.s
+
+pin_connect_block_setup_for_uart0 00000000
+
+Symbol: pin_connect_block_setup_for_uart0
+   Definitions
+      At line 4 in file lab4.s
+   Uses
+      None
+Comment: pin_connect_block_setup_for_uart0 unused
+read_character 00000000
+
+Symbol: read_character
+   Definitions
+      At line 6 in file lab4.s
+   Uses
+      At line 61 in file lab4.s
+      At line 107 in file lab4.s
+      At line 141 in file lab4.s
+
+read_string 00000000
+
+Symbol: read_string
+   Definitions
+      At line 8 in file lab4.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 159 in file lab4.s
+Comment: read_string used once
+reverse_bits 00000000
+
+Symbol: reverse_bits
+   Definitions
+      At line 13 in file lab4.s
+   Uses
+      At line 162 in file lab4.s
+Comment: reverse_bits used once
+seven_segment 00000000
+
+Symbol: seven_segment
+   Definitions
+      At line 12 in file lab4.s
+   Uses
+      At line 123 in file lab4.s
+Comment: seven_segment used once
+string_to_int 00000000
+
+Symbol: string_to_int
+   Definitions
+      At line 11 in file lab4.s
+   Uses
+      At line 160 in file lab4.s
+Comment: string_to_int used once
+uart_init 00000000
+
+Symbol: uart_init
+   Definitions
+      At line 5 in file lab4.s
+   Uses
+      None
+Comment: uart_init unused
+10 symbols
+374 symbols in table

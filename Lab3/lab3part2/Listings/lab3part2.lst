@@ -1,0 +1,1094 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             lib, CODE, READWRITE
+    2 00000000                 EXPORT           lab3
+    3 00000000                 EXPORT           pin_connect_block_setup_for_uar
+t0
+    4 00000000         
+    5 00000000         
+    6 00000000         ;U0LSR EQU 0x14   ; UART0 Line Status Register
+    7 00000000 E000C014 
+                       U0LSR   EQU              0xE000C014  ; UART0 Line Status
+                                                             Register
+    8 00000000 E000C000 
+                       U0THR   EQU              0xE000C000
+    9 00000000 00000000 
+                       stringaddress
+                               DCD              0x00000000
+   10 00000004         
+   11 00000004         ; You'll want to define more constants to make your code
+                        easier 
+   12 00000004         ; to read and debug
+   13 00000004         
+   14 00000004         ; Memory allocated for user-entered strings
+   15 00000004         
+   16 00000004 45 6E 74 
+              65 72 20 
+              61 20 6E 
+              75 6D 62 
+              65 72 20 
+              62 65 74 
+              77 65 65 
+              6E 20 2D 
+              39 39 39 
+              39 20 74 
+              6F 20 39 
+              39 39 39 
+              2E 20 50 
+              72 65 73 
+              73 20 61 
+              20 74 6F 
+              20 66 69 
+              6E 64 20 
+              61 76 65 
+              72 61 67 
+              65 3A 20 
+              20 00    prompt  =                "Enter a number between -9999 t
+o 9999. Press a to find average:  ",0
+   17 00000045 00 00 00        ALIGN
+   18 00000048         ; Additional strings may be defined here
+   19 00000048 45 6E 74 
+              65 72 20 
+              61 20 6E 
+              75 6D 62 
+              65 72 20 
+              6F 72 20 
+              61 20 66 
+              6F 72 20 
+              61 76 65 
+              72 61 67 
+              65 20 00 input_numbers
+                               =                "Enter a number or a for averag
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+e ",0
+   20 00000069 00 00 00        ALIGN
+   21 0000006C 54 68 65 
+              20 61 76 
+              65 72 61 
+              67 65 20 
+              69 73 3A 
+              00       answer  =                "The average is:",0
+   22 0000007C                 ALIGN
+   23 0000007C         
+   24 0000007C         
+   25 0000007C         
+   26 0000007C         lab3
+   27 0000007C E92D4000        STMFD            SP!,{lr}    ; Store register lr
+                                                             on stack
+   28 00000080 E59F4380        LDR              r4, =prompt
+   29 00000084 EB000047        BL               output_string ;; output the pro
+                                                            mpt on string
+   30 00000088 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   31 0000008C EB000059        BL               output_character ; 
+   32 00000090 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   33 00000094 EB000057        BL               output_character ;  Got to new 
+                                                            line after LF & CR
+   34 00000098 E59F436C        LDR              r4,=input_numbers
+   35 0000009C EB000041        BL               output_string ;; output the pro
+                                                            mpt on string
+   36 000000A0 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   37 000000A4 EB000053        BL               output_character ; 
+   38 000000A8 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   39 000000AC EB000051        BL               output_character ;  Got to new 
+                                                            line after LF & CR
+   40 000000B0 E3A06000        MOV              r6,#0       ; set up a counter 
+                                                            to keep track of ho
+                                                            w many numbers are 
+                                                            inputted 
+   41 000000B4 E3A05000        MOV              r5,#0       ; initialize it to 
+                                                            0 to add the inpute
+                                                            d numbers in add_in
+                                                            put  
+   42 000000B8         start
+   43 000000B8 E59F4350        LDR              r4,=stringaddress ; Base adress
+                                                             where user enters 
+                                                            the value
+   44 000000BC EA000026        B                read_string ; read the string
+   45 000000C0 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   46 000000C4 EB00004B        BL               output_character ; 
+   47 000000C8 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   48 000000CC EB000049        BL               output_character ;  Got to new 
+                                                            line after LF & CR
+   49 000000D0         
+   50 000000D0         
+   51 000000D0         
+   52 000000D0 E1A02003 
+                       saves   MOV              r2,r3       ;load the converted
+                                                             into r2
+   53 000000D4 E2866001        ADD              r6,r6,#1    ; increment the cou
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+                                                            nter.This will be o
+                                                            ur divisor   
+   54 000000D8 EB000095        BL               add_input   ;to add the numbers
+                                                             thats been convert
+                                                            ed
+   55 000000DC E1A01005        MOV              r1,r5       ; added number will
+                                                             be dividend  
+   56 000000E0         
+   57 000000E0         answer1
+   58 000000E0 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   59 000000E4 EB000043        BL               output_character ; 
+   60 000000E8 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   61 000000EC EB000041        BL               output_character ;  Got to new 
+                                                            line after LF & CR
+   62 000000F0 E59F431C        LDR              r4,=answer
+   63 000000F4 EB00002B        BL               output_string
+   64 000000F8 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   65 000000FC EB00003D        BL               output_character ; 
+   66 00000100 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   67 00000104 EB00003B        BL               output_character ;  Got to new 
+                                                            line after LF & CR
+   68 00000108 E1A00006        MOV              r0,r6       ; divisor intiializ
+                                                            ed in r0
+   69 0000010C EB00008E        BL               div_and_mod ; divide to take th
+                                                            e average
+   70 00000110 E1A00001        MOV              r0,r1       ; answer to be save
+                                                            d in r0
+   71 00000114 EB000070        BL               int_to_string
+   72 00000118 E5904000        LDR              r4,[r0]
+   73 0000011C         ;LDRB r0,[r1]
+   74 0000011C EB00000E        BL               read_string
+   75 00000120 EAFFFFFE        B                lab3
+   76 00000124         ;qoutient will be saved in r1
+   77 00000124         ;BL int_to_string ; change the final result to string to
+                        display   LDR r4,=answer
+   78 00000124         morenumbers
+   79 00000124 E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   80 00000128 EB000032        BL               output_character ; 
+   81 0000012C E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   82 00000130 EB000030        BL               output_character ;  Got to new 
+                                                            line after LF & CR 
+                                                                
+   83 00000134 E59F42D0        LDR              r4,=input_numbers
+   84 00000138 EB00001A        BL               output_string ;; output the pro
+                                                            mpt on string
+   85 0000013C E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+   86 00000140 EB00002C        BL               output_character ; 
+   87 00000144 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+   88 00000148 EB00002A        BL               output_character ;  Got to new 
+                                                            line after LF & CR 
+                                                                
+   89 0000014C E59F42BC        LDR              r4,=stringaddress ; Base adress
+                                                             where user enters 
+                                                            the value
+   90 00000150 EB000001        BL               read_string
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+   91 00000154         ;B start ; loop back to start to input more numbers
+   92 00000154 E8BD4000        LDMFD            SP!,{lr}
+   93 00000158 E12FFF1E        BX               lr
+   94 0000015C         
+   95 0000015C         
+   96 0000015C         
+   97 0000015C         read_string
+   98 0000015C E92D401F        STMFD            SP!,{r0-r4,lr}
+   99 00000160 EB000019        BL               read_character
+  100 00000164 E3500061        CMP              r0,#0x61
+  101 00000168 0AFFFFDC        BEQ              answer1
+  102 0000016C EB000016 
+                       loop2   BL               read_character
+  103 00000170 E350000D        CMP              r0, #0x0D   ; Comparing with CR
+                                                             in ascii
+  104 00000174 0A000002        BEQ              done        ; if user hit enter
+                                                             go to done
+  105 00000178 E5C40000        STRB             r0,[r4]     ; store it into r4
+  106 0000017C E2844001        ADD              r4,r4,#1    ; increment to the 
+                                                            next byte of addres
+                                                            s
+  107 00000180 EAFFFFF9        B                loop2       ; loop back     
+  108 00000184         
+  109 00000184         done
+  110 00000184 EB000025        BL               string_to_int
+  111 00000188 EBFFFFD0        BL               saves
+  112 0000018C E3A0000A        MOV              r0, #0xA    ;Line Feed \n 
+  113 00000190 EB000018        BL               output_character ; 
+  114 00000194 E3A0000D        MOV              r0, #0xD    ; Carriage Return \
+                                                            r
+  115 00000198 EB000016        BL               output_character ;  Got to new 
+                                                            line after LF & CR 
+                                                                 
+  116 0000019C EAFFFFE0        B                morenumbers
+  117 000001A0         
+  118 000001A0 E8BD401F        LDMFD            sp!,{r0-r4,lr}
+  119 000001A4 E12FFF1E        BX               lr
+  120 000001A8         
+  121 000001A8         output_string
+  122 000001A8 E92D401F        STMFD            SP!,{r0-r4,lr}
+  123 000001AC         
+  124 000001AC         
+  125 000001AC E5D40000 
+                       loop3   LDRB             r0, [r4]    ; Load the contents
+                                                             to r0
+  126 000001B0 E3500000        CMP              r0,#0x00    ; check if its null
+                                                            
+  127 000001B4 0A000002        BEQ              done1
+  128 000001B8 EB00000E        BL               output_character
+  129 000001BC E2844001        ADD              r4,r4,#1
+  130 000001C0 EAFFFFF9        B                loop3       ;if its not null mo
+                                                            ve to next char
+  131 000001C4         done1
+  132 000001C4         
+  133 000001C4 E8BD401F        LDMFD            SP!,{r0-r4,lr}
+  134 000001C8 E12FFF1E        BX               lr
+  135 000001CC         
+  136 000001CC         read_character
+  137 000001CC E92D4001        STMFD            SP!,{r0,lr} ; Store register lr
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+                                                             on stack
+  138 000001D0 E59F1240        LDR              r1, =U0LSR
+  139 000001D4         
+  140 000001D4 E5D10000 
+                       loop0   LDRB             r0,[r1]     ;
+  141 000001D8 E2000001        AND              r0,r0,#1
+  142 000001DC E3500000        CMP              r0,#0
+  143 000001E0 0AFFFFFB        BEQ              loop0
+  144 000001E4 E59F1230        LDR              r1, =U0THR  ; for UOTHR AND U0R
+                                                            BR
+  145 000001E8 E5D10000        LDRB             r0,[r1]
+  146 000001EC EA000001        B                output_character
+  147 000001F0 E8BD4001        LDMFD            sp!, {r0,lr}
+  148 000001F4 E12FFF1E        BX               lr
+  149 000001F8         
+  150 000001F8         
+  151 000001F8         output_character
+  152 000001F8 E92D4007        STMFD            SP!,{r0-r2,lr} ; Store register
+                                                             lr on stack
+  153 000001FC E59F1214        LDR              r1, =U0LSR
+  154 00000200         
+  155 00000200         loop1
+  156 00000200 E5D12000        LDRB             r2,[r1]
+  157 00000204 E2022020        AND              r2,r2,#32
+  158 00000208 E3520000        CMP              r2,#0
+  159 0000020C 0AFFFFFB        BEQ              loop1
+  160 00000210 E59F1204        LDR              r1, =U0THR
+  161 00000214 E5C10000        STRB             r0,[r1]
+  162 00000218 E8BD4007        LDMFD            sp!, {r0-r2,lr}
+  163 0000021C E12FFF1E        BX               lr
+  164 00000220         
+  165 00000220         ;;int to be stored in r0 
+  166 00000220         
+  167 00000220         string_to_int
+  168 00000220         
+  169 00000220 E92D43FF        STMFD            SP!,{r0-r9,lr} ; 
+  170 00000224 E3A01000        MOV              r1,#0       ; Setting the count
+                                                            er
+  171 00000228 E3A02000        MOV              r2,#0       ; Setting flags for
+                                                             negative number   
+                                                              
+  172 0000022C E3A03000        MOV              r3,#0       ; answers to be pla
+                                                            ced in
+  173 00000230 E4D45001        LDRB             r5,[r4],#1  ;loading the byte o
+                                                            f string to r5
+  174 00000234 E355002D        CMP              r5,#0x2D    ;  checking if the 
+                                                            first char is '-' o
+                                                            r negative
+  175 00000238 1A000001        BNE              tracknumofchar ; if number is p
+                                                            ositive skip 
+  176 0000023C E2411001        ADD              r1,#-1      ; Since the first c
+                                                            har is '-'decrement
+                                                             the counter
+  177 00000240 E3A02001        MOV              r2,#1       ; Flag =1; 
+  178 00000244         
+  179 00000244         tracknumofchar
+  180 00000244 E2811001        ADD              r1,r1,#1    ; increment the cou
+                                                            nter
+  181 00000248 E4D45001        LDRB             r5,[r4],#1  ;Load next characte
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+                                                            r
+  182 0000024C E3550000        CMP              r5,#0       ; Check whether it 
+                                                            hits a null char
+  183 00000250 1AFFFFFB        BNE              tracknumofchar ; loop back and 
+                                                            it counts the num o
+                                                            f char in string
+  184 00000254         ;;ascii '0' = 48, '1'=49 ......'9' = 57
+  185 00000254         ;  Ascii - 48 * the digit   
+  186 00000254         ; if '3999' 
+  187 00000254         ;0009  Ascii(9) - 48 * 1 = (57-48)*1         
+  188 00000254         ;0090  Ascii(9) - 48 *10
+  189 00000254         ;0900  ''   "     "   *100
+  190 00000254         ;3000   "   3 - 48 *1000
+  191 00000254         ;Add everything up  
+  192 00000254 E59F41B4        LDR              r4,=stringaddress ; load the st
+                                                            ringadress
+  193 00000258 E3520000        CMP              r2,#0       ; check the negativ
+                                                            e flag
+  194 0000025C 0A000000        BEQ              ifpositive  ; if its 0 go to po
+                                                            sitive
+  195 00000260 E2844001        ADD              r4,r4,#1    ; otherwsie increme
+                                                            nt the stringaddres
+                                                            s
+  196 00000264         
+  197 00000264         
+  198 00000264 E4D45001 
+                       ifpositive
+                               LDRB             r5,[r4],#1  ;load the byte into
+                                                             r5
+  199 00000268 E2455030        ADD              r5,r5,#-48  ; Ascii(r5) - 48 = 
+                                                            numerical value
+  200 0000026C E3510004        CMP              r1,#4       ; is the string 4 c
+                                                            haracter?
+  201 00000270 1A000004        BNE              threechars  ; if not go to 3 ch
+                                                            aracters.
+  202 00000274 E2411001        ADD              r1,r1,#-1   ; if yes decrement 
+                                                            the counter
+  203 00000278 E3A09FFA        MOV              r9,#1000    ; intialize it to 1
+                                                            000
+  204 0000027C E0050599        MUL              r5,r9,r5    ; multiply by 1000 
+                                                            
+  205 00000280 E0833005        ADD              r3,r3,r5    ; answer is stored 
+                                                            in r0
+  206 00000284 EAFFFFF6        B                ifpositive
+  207 00000288         
+  208 00000288 E3510003 
+                       threechars
+                               CMP              r1,#3       ; is string 3 chara
+                                                            cters?
+  209 0000028C 1A000004        BNE              twochars    ; if not got to two
+                                                             chacacters
+  210 00000290 E2411001        ADD              r1,r1,#-1   ; if yes decrement 
+                                                            the coutner
+  211 00000294 E3A09064        MOV              r9,#100     ; intiialize to 100
+                                                            
+  212 00000298 E0050599        MUL              r5,r9,r5    ; multiply by 100
+  213 0000029C E0833005        ADD              r3,r3,r5    ; place the answer 
+                                                            in r0
+  214 000002A0 EAFFFFEF        B                ifpositive
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  215 000002A4         
+  216 000002A4 E3510002 
+                       twochars
+                               CMP              r1,#2
+  217 000002A8 1A000004        BNE              char
+  218 000002AC E2411001        ADD              r1,r1,#-1
+  219 000002B0 E3A0900A        MOV              r9,#10
+  220 000002B4 E0050599        MUL              r5,r9,r5
+  221 000002B8 E0833005        ADD              r3,r3,r5
+  222 000002BC EAFFFFE8        B                ifpositive
+  223 000002C0 E0800005 
+                       char    ADD              r0,r0,r5
+  224 000002C4 E3520000        CMP              r2,#0
+  225 000002C8 0A000001        BEQ              donestringtoint
+  226 000002CC E1E03003        MVN              r3,r3
+  227 000002D0 E2833001        ADD              r3,r3,#1
+  228 000002D4         donestringtoint
+  229 000002D4 E8BD43FF        LDMFD            sp!, {r0-r9,lr}
+  230 000002D8 E12FFF1E        BX               lr
+  231 000002DC         
+  232 000002DC         
+  233 000002DC         int_to_string
+  234 000002DC E92D4000        STMFD            SP!,{lr}
+  235 000002E0 E3A05000        MOV              r5, #0x00   ; 
+  236 000002E4 E5C45000        STRB             r5, [r4]    ; 
+  237 000002E8 E2444001        SUB              r4, r4, #1  ;
+  238 000002EC E3500000        CMP              r0, #0      ;check negativity o
+                                                            f value in r0
+  239 000002F0 AA000000        BGE              loop5       ;if not negative br
+                                                            anch
+  240 000002F4 E3A05001        MOV              r5, #1      ;if negative, set 1
+                                                             in r5 to be used a
+                                                            s a negativity flag
+                                                            
+  241 000002F8         loop5
+  242 000002F8 E3A0000A        MOV              r0, #10     ; set the value in 
+                                                            r0 to be 10
+  243 000002FC EB000012        BL               div_and_mod ; use the div and m
+                                                            od method with r1 a
+                                                            s the dividend and 
+                                                            the value 10(in r0)
+                                                             as the divisor
+  244 00000300 E2800030        ADD              r0, r0, #48 ; convert the remai
+                                                            nder value in r1 to
+                                                             its Ascii value
+  245 00000304 E5C40000        STRB             r0, [r4]    ; store the ascii v
+                                                            alue from r0 to the
+                                                             memory address hel
+                                                            d in r4
+  246 00000308 E3510000        CMP              r1, #0      ; check if the quot
+                                                            ient value in r1 is
+                                                             0
+  247 0000030C 0A000001        BEQ              loop6       ; if the quotient i
+                                                            s 0, exit out of th
+                                                            e loop
+  248 00000310 E2444001        SUB              r4, r4, #1  ;else decrement the
+                                                             memory address in 
+                                                            r4 by 1 to move ont
+                                                            o the next address 
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+                                                            needed to store an 
+                                                            ascii value
+  249 00000314 EAFFFFF7        B                loop5
+  250 00000318         loop6
+  251 00000318 E3550000        CMP              r5, #0      ;after exiting the 
+                                                            loop check if the n
+                                                            egative flag is off
+                                                             
+  252 0000031C 0A000002        BEQ              done3       ;if the negative fl
+                                                            ag is off exit the 
+                                                            subroutine
+  253 00000320 E2444001        SUB              r4, r4, #1  ; if the flag is on
+                                                            , decrement the mem
+                                                            ory address in r4 b
+                                                            y 1 to move onto th
+                                                            e next address need
+                                                            ed to store an asci
+                                                            i value
+  254 00000324 E3A0502D        MOV              r5, #0x2D   ; move the ascii va
+                                                            lue of dash(-) into
+                                                             r5
+  255 00000328 E5C45000        STRB             r5, [r4]    ; store the byte si
+                                                            zed ascii value fro
+                                                            m r5 to the memory 
+                                                            address in r4
+  256 0000032C         done3
+  257 0000032C E8BD4000        LDMFD            sp!, {lr}
+  258 00000330 E12FFF1E        BX               lr
+  259 00000334         
+  260 00000334         
+  261 00000334         
+  262 00000334         ;input numbers are stored in register r2
+  263 00000334         
+  264 00000334         add_input
+  265 00000334         
+  266 00000334 E92D5FFF        STMFD            SP!,{r0-r12,lr}
+  267 00000338 E1A03002        MOV              r3,r2       ; saving the first 
+                                                            number in r3
+  268 0000033C E0855003        ADD              r5,r5,r3
+  269 00000340 EAFFFF77        B                morenumbers
+  270 00000344 E8BD43FF        LDMFD            sp!, {r0-r9,lr}
+  271 00000348 E12FFF1E        BX               lr
+  272 0000034C         
+  273 0000034C         ;;divisor is intiialzed in register r0 in div_and_mod
+  274 0000034C         
+  275 0000034C         div_and_mod
+  276 0000034C E92D5FFC        STMFD            SP!, {r2-r12,lr}
+  277 00000350 E3A05000        MOV              r5,#0       ; setting r5 to 0 t
+                                                            o keep track whethe
+                                                            r the dividend is p
+                                                            os or neg
+  278 00000354 E3510000        CMP              r1,#0       ; comparing dividen
+                                                            d with 0
+  279 00000358 BA000004        BLT              complement  ;if its less than 0
+                                                             go to complement
+  280 0000035C E3A0300F 
+                       initialize
+                               MOV              r3,#15      ; set counter to 15
+                                                            
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  281 00000360 E3A02000        MOV              r2,#0       ; set quotient to 0
+                                                            
+  282 00000364 E1A00780        MOV              r0,r0,LSL#15 ; shift 15 places 
+                                                            to left
+  283 00000368 E1A04001        MOV              r4,r1       ; set remainder to 
+                                                            dividend
+  284 0000036C EA000003        B                routine0
+  285 00000370 E1E01001 
+                       complement
+                               MVN              r1,r1       ; take one's comple
+                                                            ment
+  286 00000374 E2811001        ADD              r1,r1,#1    ; add one for two's
+                                                             complement
+  287 00000378 E3A05001        MOV              r5,#1       ; r5 set to 1 since
+                                                             the dividend was n
+                                                            egative    
+  288 0000037C EAFFFFF6        B                initialize  ; branch to initial
+                                                            ize
+  289 00000380         
+  290 00000380 E0444000 
+                       routine0
+                               SUB              r4,r4,r0    ; subtract divisor 
+                                                            from remainder
+  291 00000384 E3540000        CMP              r4,#0       ; compare remainder
+                                                             with 0
+  292 00000388 BA000003        BLT              routine     ; if its less than 
+                                                            0 go to routine
+  293 0000038C E1A02082        MOV              r2,r2,LSL#1 ; shift quotient on
+                                                            e place to left
+  294 00000390 E2822001        ADD              r2,r2,#1    ; add one for LSB =
+                                                            1
+  295 00000394 E1A000A0        MOV              r0,r0,LSR#1 ; shift divisor 1 p
+                                                            laces to right
+  296 00000398 EA000003        B                comparison  ; Branch to compari
+                                                            son
+  297 0000039C         
+  298 0000039C E0844000 
+                       routine ADD              r4,r4,r0    ; Add remainder wit
+                                                            h divisor
+  299 000003A0 E1A02082        MOV              r2,r2,LSL#1 ; Shift quotient on
+                                                            e place to left
+  300 000003A4 E1A000A0        MOV              r0,r0,LSR#1 ; shift divisor one
+                                                             place to right
+  301 000003A8 EAFFFFFF        B                comparison  ;  Branch to compar
+                                                            ison
+  302 000003AC         
+  303 000003AC E3530000 
+                       comparison
+                               CMP              r3,#0       ; compare counter t
+                                                            o 0
+  304 000003B0 CA000000        BGT              decrement   ; if its greater de
+                                                            crement
+  305 000003B4 EA000001        B                check       ; Branch to check i
+                                                            f its less or equal
+                                                            
+  306 000003B8 E2433001 
+                       decrement
+                               SUB              r3,r3,#1    ; counter=counter-1
+                                                            
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  307 000003BC EAFFFFEF        B                routine0    ; Branch to routine
+                                                            0
+  308 000003C0 E1A00004 
+                       check   MOV              r0,r4       ; Initialize the re
+                                                            mainder to r0
+  309 000003C4 E3550000        CMP              r5,#0       ; Compare r5
+  310 000003C8 CA000000        BGT              finalcomplement ; if r5 is 1 th
+                                                            en need to negate a
+                                                            gain
+  311 000003CC EA000002        B                finish      ; if its positive j
+                                                            ust branch to finis
+                                                            h
+  312 000003D0         
+  313 000003D0 E1E02002 
+                       finalcomplement
+                               MVN              r2,r2       ; one's complement
+  314 000003D4 E2822001        ADD              r2,r2,#1    ; add one for two's
+                                                             complement
+  315 000003D8 EAFFFFFF        B                finish      ; done
+  316 000003DC         
+  317 000003DC E1A01002 
+                       finish  MOV              r1,r2       ; initialize quotie
+                                                            nt to r1
+  318 000003E0 E8BD5FFC        LDMFD            SP!,{r2-r12,lr}
+  319 000003E4 E12FFF1E        BX               lr          ;
+  320 000003E8         
+  321 000003E8         
+  322 000003E8         
+  323 000003E8         pin_connect_block_setup_for_uart0
+  324 000003E8 E92D4003        STMFD            sp!, {r0, r1, lr}
+  325 000003EC E59F002C        LDR              r0, =0xE002C000 ; PINSEL0
+  326 000003F0 E5901000        LDR              r1, [r0]
+  327 000003F4 E3811005        ORR              r1, r1, #5
+  328 000003F8 E3C1100A        BIC              r1, r1, #0xA
+  329 000003FC E5801000        STR              r1, [r0]
+  330 00000400 E8BD4003        LDMFD            sp!, {r0, r1, lr}
+  331 00000404 E12FFF1E        BX               lr
+  332 00000408         
+  333 00000408         
+  334 00000408         
+  335 00000408                 END
+              00000000 
+              00000000 
+              00000000 
+              00000000 
+              E000C014 
+              E000C000 
+              E002C000 
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\o
+bjects\lab3part2.d -o.\objects\lab3part2.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_
+v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\Philips --predefine="__EVAL SETA 1" -
+-predefine="__UVISION_VERSION SETA 524" --list=.\listings\lab3part2.lst lab3par
+t2.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+add_input 00000334
+
+Symbol: add_input
+   Definitions
+      At line 264 in file lab3part2.s
+   Uses
+      At line 54 in file lab3part2.s
+Comment: add_input used once
+answer 0000006C
+
+Symbol: answer
+   Definitions
+      At line 21 in file lab3part2.s
+   Uses
+      At line 62 in file lab3part2.s
+Comment: answer used once
+answer1 000000E0
+
+Symbol: answer1
+   Definitions
+      At line 57 in file lab3part2.s
+   Uses
+      At line 101 in file lab3part2.s
+Comment: answer1 used once
+char 000002C0
+
+Symbol: char
+   Definitions
+      At line 223 in file lab3part2.s
+   Uses
+      At line 217 in file lab3part2.s
+Comment: char used once
+check 000003C0
+
+Symbol: check
+   Definitions
+      At line 308 in file lab3part2.s
+   Uses
+      At line 305 in file lab3part2.s
+Comment: check used once
+comparison 000003AC
+
+Symbol: comparison
+   Definitions
+      At line 303 in file lab3part2.s
+   Uses
+      At line 296 in file lab3part2.s
+      At line 301 in file lab3part2.s
+
+complement 00000370
+
+Symbol: complement
+   Definitions
+      At line 285 in file lab3part2.s
+   Uses
+      At line 279 in file lab3part2.s
+Comment: complement used once
+decrement 000003B8
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: decrement
+   Definitions
+      At line 306 in file lab3part2.s
+   Uses
+      At line 304 in file lab3part2.s
+Comment: decrement used once
+div_and_mod 0000034C
+
+Symbol: div_and_mod
+   Definitions
+      At line 275 in file lab3part2.s
+   Uses
+      At line 69 in file lab3part2.s
+      At line 243 in file lab3part2.s
+
+done 00000184
+
+Symbol: done
+   Definitions
+      At line 109 in file lab3part2.s
+   Uses
+      At line 104 in file lab3part2.s
+Comment: done used once
+done1 000001C4
+
+Symbol: done1
+   Definitions
+      At line 131 in file lab3part2.s
+   Uses
+      At line 127 in file lab3part2.s
+Comment: done1 used once
+done3 0000032C
+
+Symbol: done3
+   Definitions
+      At line 256 in file lab3part2.s
+   Uses
+      At line 252 in file lab3part2.s
+Comment: done3 used once
+donestringtoint 000002D4
+
+Symbol: donestringtoint
+   Definitions
+      At line 228 in file lab3part2.s
+   Uses
+      At line 225 in file lab3part2.s
+Comment: donestringtoint used once
+finalcomplement 000003D0
+
+Symbol: finalcomplement
+   Definitions
+      At line 313 in file lab3part2.s
+   Uses
+      At line 310 in file lab3part2.s
+Comment: finalcomplement used once
+finish 000003DC
+
+Symbol: finish
+   Definitions
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 317 in file lab3part2.s
+   Uses
+      At line 311 in file lab3part2.s
+      At line 315 in file lab3part2.s
+
+ifpositive 00000264
+
+Symbol: ifpositive
+   Definitions
+      At line 198 in file lab3part2.s
+   Uses
+      At line 194 in file lab3part2.s
+      At line 206 in file lab3part2.s
+      At line 214 in file lab3part2.s
+      At line 222 in file lab3part2.s
+
+initialize 0000035C
+
+Symbol: initialize
+   Definitions
+      At line 280 in file lab3part2.s
+   Uses
+      At line 288 in file lab3part2.s
+Comment: initialize used once
+input_numbers 00000048
+
+Symbol: input_numbers
+   Definitions
+      At line 19 in file lab3part2.s
+   Uses
+      At line 34 in file lab3part2.s
+      At line 83 in file lab3part2.s
+
+int_to_string 000002DC
+
+Symbol: int_to_string
+   Definitions
+      At line 233 in file lab3part2.s
+   Uses
+      At line 71 in file lab3part2.s
+Comment: int_to_string used once
+lab3 0000007C
+
+Symbol: lab3
+   Definitions
+      At line 26 in file lab3part2.s
+   Uses
+      At line 2 in file lab3part2.s
+      At line 75 in file lab3part2.s
+
+lib 00000000
+
+Symbol: lib
+   Definitions
+      At line 1 in file lab3part2.s
+   Uses
+      None
+Comment: lib unused
+loop0 000001D4
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: loop0
+   Definitions
+      At line 140 in file lab3part2.s
+   Uses
+      At line 143 in file lab3part2.s
+Comment: loop0 used once
+loop1 00000200
+
+Symbol: loop1
+   Definitions
+      At line 155 in file lab3part2.s
+   Uses
+      At line 159 in file lab3part2.s
+Comment: loop1 used once
+loop2 0000016C
+
+Symbol: loop2
+   Definitions
+      At line 102 in file lab3part2.s
+   Uses
+      At line 107 in file lab3part2.s
+Comment: loop2 used once
+loop3 000001AC
+
+Symbol: loop3
+   Definitions
+      At line 125 in file lab3part2.s
+   Uses
+      At line 130 in file lab3part2.s
+Comment: loop3 used once
+loop5 000002F8
+
+Symbol: loop5
+   Definitions
+      At line 241 in file lab3part2.s
+   Uses
+      At line 239 in file lab3part2.s
+      At line 249 in file lab3part2.s
+
+loop6 00000318
+
+Symbol: loop6
+   Definitions
+      At line 250 in file lab3part2.s
+   Uses
+      At line 247 in file lab3part2.s
+Comment: loop6 used once
+morenumbers 00000124
+
+Symbol: morenumbers
+   Definitions
+      At line 78 in file lab3part2.s
+   Uses
+      At line 116 in file lab3part2.s
+      At line 269 in file lab3part2.s
+
+output_character 000001F8
+
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: output_character
+   Definitions
+      At line 151 in file lab3part2.s
+   Uses
+      At line 31 in file lab3part2.s
+      At line 33 in file lab3part2.s
+      At line 37 in file lab3part2.s
+      At line 39 in file lab3part2.s
+      At line 46 in file lab3part2.s
+      At line 48 in file lab3part2.s
+      At line 59 in file lab3part2.s
+      At line 61 in file lab3part2.s
+      At line 65 in file lab3part2.s
+      At line 67 in file lab3part2.s
+      At line 80 in file lab3part2.s
+      At line 82 in file lab3part2.s
+      At line 86 in file lab3part2.s
+      At line 88 in file lab3part2.s
+      At line 113 in file lab3part2.s
+      At line 115 in file lab3part2.s
+      At line 128 in file lab3part2.s
+      At line 146 in file lab3part2.s
+
+output_string 000001A8
+
+Symbol: output_string
+   Definitions
+      At line 121 in file lab3part2.s
+   Uses
+      At line 29 in file lab3part2.s
+      At line 35 in file lab3part2.s
+      At line 63 in file lab3part2.s
+      At line 84 in file lab3part2.s
+
+pin_connect_block_setup_for_uart0 000003E8
+
+Symbol: pin_connect_block_setup_for_uart0
+   Definitions
+      At line 323 in file lab3part2.s
+   Uses
+      At line 3 in file lab3part2.s
+Comment: pin_connect_block_setup_for_uart0 used once
+prompt 00000004
+
+Symbol: prompt
+   Definitions
+      At line 16 in file lab3part2.s
+   Uses
+      At line 28 in file lab3part2.s
+Comment: prompt used once
+read_character 000001CC
+
+Symbol: read_character
+   Definitions
+      At line 136 in file lab3part2.s
+   Uses
+      At line 99 in file lab3part2.s
+      At line 102 in file lab3part2.s
+
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Relocatable symbols
+
+read_string 0000015C
+
+Symbol: read_string
+   Definitions
+      At line 97 in file lab3part2.s
+   Uses
+      At line 44 in file lab3part2.s
+      At line 74 in file lab3part2.s
+      At line 90 in file lab3part2.s
+
+routine 0000039C
+
+Symbol: routine
+   Definitions
+      At line 298 in file lab3part2.s
+   Uses
+      At line 292 in file lab3part2.s
+Comment: routine used once
+routine0 00000380
+
+Symbol: routine0
+   Definitions
+      At line 290 in file lab3part2.s
+   Uses
+      At line 284 in file lab3part2.s
+      At line 307 in file lab3part2.s
+
+saves 000000D0
+
+Symbol: saves
+   Definitions
+      At line 52 in file lab3part2.s
+   Uses
+      At line 111 in file lab3part2.s
+Comment: saves used once
+start 000000B8
+
+Symbol: start
+   Definitions
+      At line 42 in file lab3part2.s
+   Uses
+      None
+Comment: start unused
+string_to_int 00000220
+
+Symbol: string_to_int
+   Definitions
+      At line 167 in file lab3part2.s
+   Uses
+      At line 110 in file lab3part2.s
+Comment: string_to_int used once
+stringaddress 00000000
+
+Symbol: stringaddress
+   Definitions
+      At line 9 in file lab3part2.s
+   Uses
+      At line 43 in file lab3part2.s
+      At line 89 in file lab3part2.s
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 192 in file lab3part2.s
+
+threechars 00000288
+
+Symbol: threechars
+   Definitions
+      At line 208 in file lab3part2.s
+   Uses
+      At line 201 in file lab3part2.s
+Comment: threechars used once
+tracknumofchar 00000244
+
+Symbol: tracknumofchar
+   Definitions
+      At line 179 in file lab3part2.s
+   Uses
+      At line 175 in file lab3part2.s
+      At line 183 in file lab3part2.s
+
+twochars 000002A4
+
+Symbol: twochars
+   Definitions
+      At line 216 in file lab3part2.s
+   Uses
+      At line 209 in file lab3part2.s
+Comment: twochars used once
+43 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+U0LSR E000C014
+
+Symbol: U0LSR
+   Definitions
+      At line 7 in file lab3part2.s
+   Uses
+      At line 138 in file lab3part2.s
+      At line 153 in file lab3part2.s
+
+U0THR E000C000
+
+Symbol: U0THR
+   Definitions
+      At line 8 in file lab3part2.s
+   Uses
+      At line 144 in file lab3part2.s
+      At line 160 in file lab3part2.s
+
+2 symbols
+379 symbols in table
