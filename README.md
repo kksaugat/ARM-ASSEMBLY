@@ -1,5 +1,6 @@
 # ARM-ASSEMBLY
 
+
 Objective 
 
 The objectives of these programs are to communicate with the ARM processor via serial communication using the UART,
@@ -24,5 +25,6 @@ Finally Click on the Debug tab and select ULINK ARM Debugger from the pulldown m
 
 
 Testing
+
 The C program allows the user to test the program.
 
