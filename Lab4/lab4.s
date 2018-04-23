@@ -1,21 +1,20 @@
-        
-		  AREA  GPIO, CODE, READWRITE	     
-   		  EXPORT   lab4
+  	  AREA  GPIO, CODE, READWRITE	     
+   	  EXPORT   lab4
           EXTERN   pin_connect_block_setup_for_uart0
           EXTERN   uart_init
           EXTERN   read_character
           EXTERN   output_character
           EXTERN   read_string
           EXTERN   output_string
-	      EXTERN illuminate_RGB_LED    
+	  EXTERN illuminate_RGB_LED    
     	  EXTERN   string_to_int
           EXTERN seven_segment      
           EXTERN reverse_bits		
-		  EXPORT  setup_rgb
+	  EXPORT  setup_rgb
           EXPORT   setup_LEDS___Pbuttons 
           EXPORT setup_digitset			  
 			  
-PIODATA EQU 0x8         ; Offset to paralle
+PIODATA EQU 0x8         
   ;Pin block initialization                                                                      
 PINSEL0 EQU 0xE002C000
 IO0DIR  EQU 0xE0028008
@@ -58,12 +57,12 @@ lab4
          BL   output_character
          MOV  r0,#0x0D
        	 BL   output_character	
-		 BL   read_character
-		 CMP  r0,#0x64  ; if 'd' then branch to display the digit
-		 BEQ  display_digit_on_7_seg
+	 BL   read_character
+	 CMP  r0,#0x64  ; if 'd' then branch to display the digit
+	 BEQ  display_digit_on_7_seg
          CMP  r0,#0x71 ; if 'q' then quit the program
-		 BEQ  quit
-		 CMP r0,#0x6c  ; if 'l' illuminate the led
+	 BEQ  quit
+	 CMP r0,#0x6c  ; if 'l' illuminate the led
          BEQ illuminate_LED
          CMP r0,#0x72    ; if 'r' go to rgb
          BEQ rgb_LED
@@ -94,10 +93,10 @@ setup_digitset
       STMFD sp!,{lr}
        LDR r4,=IO0DIR  ; address of IO0DIR ro r4
        LDR r2,=0x26B784    ; port 0 pin 2 then the segments pins to 1 
-	   ORR r0,r0,r2    ; set the bits 
-	   STR r0,[r4]  ; store it into r0
-	   LDMFD sp!,{lr}
-	   BX lr
+       ORR r0,r0,r2    ; set the bits 
+       STR r0,[r4]  ; store it into r0
+       LDMFD sp!,{lr}
+       BX lr
 
 display_digit_on_7_seg
     STMFD SP!,{lr}    ; Store registers on stack
@@ -140,15 +139,15 @@ again LDR r4,=colors
 	LDR r4,=stringaddress
 	BL read_character
 	BL illuminate_RGB_LED  ; illumiate according to the color you want
-    LDMFD   SP!, {lr, r0-r4}
-    BX lr
+     	LDMFD   SP!, {lr, r0-r4}
+        BX lr
 
 
 
 
 illuminate_LED
-    STMFD SP!, {lr}
-    LDR r2,=IO1SET   ; Load the address of I01SET
+   	STMFD SP!, {lr}
+        LDR r2,=IO1SET   ; Load the address of I01SET
 	LDR r0,[r2]    ; LOAD THE value to r0
 	ORR r0,r0,#0xf0000   ; PORT 1 16-19 TO 1
 	STR r0,[r2]  ; STORE IT in r0
@@ -165,7 +164,7 @@ illuminate_LED
 	LDR r0,[r2]
 	ORR r0,r0,r1,LSL #16  ; move to get to p1.16
 	STR r0,[r2] ; store the value in r0 
-    B lab4
+   	 B lab4
   
   LDMFD SP!,{ lr}
     BX LR
