@@ -17,9 +17,9 @@
 	
 
 U0LSR     EQU 0x14			; UART0 Line Status Register
-	ALIGN
+	  ALIGN
 digits_SET	
-		DCD 0x00003780  ; 0
+	DCD 0x00003780  ; 0
         DCD 0x00003000  ; 1
         DCD 0x00009580  ; 2 - a,b,d,e,g
         DCD 0x00008780  ; 3 - a,b,c,d,g
@@ -41,7 +41,7 @@ PIODATA EQU 0x8 ; Offset to parallel I/O data register
 PINSEL0 EQU 0xE002C000
 PINSEL1 EQU 0xE002C004
 
-IO0DIR  EQU	0xE0028008
+IO0DIR  EQU 0xE0028008
 IO1DIR  EQU 0xE0028018
 IO0SET  EQU 0xE0028004
 IO0CLR  EQU 0xE002800C
@@ -50,8 +50,8 @@ IO1CLR  EQU 0xE002801C
 IO0PIN  EQU 0xE0028000
 IO1PIN  EQU 0xE0028010
 
-IO0CFG   EQU 0x26B784
-IO1CFG   EQU 0xF0000
+IO0CFG  EQU 0x26B784
+IO1CFG  EQU 0xF0000
 
 PINSEL0_GPIO_CFG EQU 0xFFFC000
 PINSEL1_GPIO_CFG EQU 0xFFFF
@@ -70,38 +70,38 @@ pin_connect_block_setup_for_uart0
 on_or_off
     
 	STMFD SP!, {lr,r0}
-    CMP r8, #0			         ; 0 for off ; 1 = 0n is it on?
+        CMP r8, #0			         ; 0 for off ; 1 = 0n is it on?
 	BNE turn_off   ; if not go to turn off
 turn_on
-    MOV r8, #1		 ; 1 = 0n		
-   MOV r0, r7      
-    BL done_display2		; go to display the digits	
-    B exit
+        MOV r8, #1		 ; 1 = 0n		
+        MOV r0, r7      
+        BL done_display2		; go to display the digits	
+   	 B exit
 
 turn_off
 	MOV r8, #0				; 0 to turn off
 	BL clear_digits			; clear the digits
 
 exit
-    LDMFD SP!, {lr,r0}
+   	LDMFD SP!, {lr,r0}
 	BX lr
 
 done_display2
-    STMFD SP!,{lr,r4,r2}
-    MOV r8,#0
+   	STMFD SP!,{lr,r4,r2}
+    	MOV r8,#0
 	LDR r4,=IO0CLR ; load the base address
 	LDR r2,=0xB784
 	STR r2,[r4]
 	LDMFD  SP!, {lr,r4,r2} ; Restore regis
-    BX LR
+    	BX LR
 clear_digits
-    STMFD SP!,{lr,r1,r2}
-    MOV r8,#0
+    	STMFD SP!,{lr,r1,r2}
+   	 MOV r8,#0
 	LDR r1,=IO0CLR ; load the base address
 	LDR r2,=0xB784
 	STR r2,[r1]
 	LDMFD  SP!, {lr,r1,r2} ; Restore regis
-    BX LR
+    	BX LR
 
 
 
@@ -217,7 +217,7 @@ SIZE_OF_STRING_LOOP
     ADD r0, r0, #1 ; incrementing the  string address to get next char
     ADD r1, r1, #1 ; incrementing the  size of the string for every character encountered
     CMP r2, #0     ; checking if the LSB is NULL
-    BNE SIZE_OF_STRING_LOOP ; keep looping if we haven’t hit null
+    BNE SIZE_OF_STRING_LOOP ; keep looping if we havenâ€™t hit null
     
     SUB r1, r1, #1 ; the last increment done is null character.  So decreasing size by 1.
     LDMFD SP!, {lr,r0,r2} ; restore the registers
@@ -387,8 +387,8 @@ QUOTIENT_POSITIVE_2
     
 	
 ; setting up PINSEL1 for GPIO use
-; r2 is passed PINSEL0 ‘s address
-; r1 is passed PINSEL0_GPIO_CFG ‘s address
+; r2 is passed PINSEL0 â€˜s address
+; r1 is passed PINSEL0_GPIO_CFG â€˜s address
 pin_connect_block_setup_for_gpio
     STMFD sp!, {lr,r0,r1,r2}
 
@@ -446,7 +446,7 @@ read_from_push_btns
     LDR r1, =IO1PIN ; getting port 1 pin register address
     LDR r0, [r1] ; loading gpio values in the address at r1
     LSR r0, #20 ; shifting so that bit 20 becomes the lsb
-    LDR r1, =0xFFFFFFFF ; storing all 1’s in r1
+    LDR r1, =0xFFFFFFFF ; storing all 1â€™s in r1
     EOR r0, r0, r1 ; XORing the value from push buttons to get the actual number
     AND r0, r0, #0xF ; clearing all but the first 4 bits
     BL reverse_lower_four_bits  ; reversing the lower four bits to adjust with the reversed ;pattern of the board
