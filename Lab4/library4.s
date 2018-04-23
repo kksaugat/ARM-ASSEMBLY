@@ -2,13 +2,13 @@
 	EXTERN lab4
 	EXPORT pin_connect_block_setup_for_uart0
 	EXPORT uart_init
-    EXPORT read_character
+    	EXPORT read_character
 	EXPORT output_character
 	EXPORT read_string
 	EXPORT output_string
 	EXPORT string_to_int 
 	EXPORT illuminate_RGB_LED
-    EXPORT seven_segment
+        EXPORT seven_segment
 	EXPORT reverse_bits	
 U0LSR EQU 0x14			; UART0 Line Status Register
 
@@ -21,8 +21,8 @@ digits_SET
         DCD 0x00009580  ; 2
         DCD 0x00008780  ; 3
         DCD 0x0000A300;   4
-		DCD 0x0000A680  ; 5
-	    DCD 0x0000B680  ; 6
+	DCD 0x0000A680  ; 5
+	DCD 0x0000B680  ; 6
         DCD 0x00000380  ; 7
         DCD 0x0000B780  ; 8
         DCD 0x0000A780  ; 9
@@ -39,17 +39,17 @@ digits_SET
 
 read_string
 		STMFD sp!,{r0,r4, lr}	  	
-LOOP1   BL read_character				
+LOOP1  	        BL read_character				
 		BL output_character				
 		CMP r0, #0x0D
 		BEQ END
 		STRB r0, [r4]
-        ADD r4,r4,#1		
+        	ADD r4,r4,#1		
 		B LOOP1	
 END		MOV r0, #0x00
 		STRB r0, [r4]		
 		MOV r0, #0x0A
-		BL	output_character
+		BL output_character
 
 		LDMFD sp!,{r0,r4,lr}
 		BX lr				
@@ -71,7 +71,7 @@ read_character
 		
 		STMFD sp!,{r6-r7,lr}
 		LDR r6, =U0THR
-        LDR r9,=U0LSR
+        	LDR r9,=U0LSR
 read_loop	LDRB r7, [r6, r9]
 		AND r7, r7, #0x1
 		CMP r7, #0
@@ -85,8 +85,8 @@ output_character
 
 		STMFD sp!,{r7-r8,lr}
 		LDR r8, =U0THR
-        LDR r9,=U0LSR
-LOOP2	LDRB r7, [r8, r9]
+        	LDR r9,=U0LSR
+LOOP2		LDRB r7, [r8, r9]
 		AND r7, r7, #0x20
 		CMP r7, #0
 		BEQ LOOP2
@@ -143,9 +143,9 @@ uart_init
 		BX 		lr   
 		      
 illuminate_RGB_LED
-    STMFD   SP!, {lr, r0-r4} 
-    CMP r0,#0x72   ; pressed 'r' for red?
-    BNE green_on    ; if not branch tp green
+   	 STMFD   SP!, {lr, r0-r4} 
+    	CMP r0,#0x72   ; pressed 'r' for red?
+   	 BNE green_on    ; if not branch tp green
 	MOV r0,#0x20000 ;1 on pin 17
 	B turn_rgb
 green_on 
@@ -173,7 +173,7 @@ yellow_on
 	B turn_rgb
 	
 white_on
-    CMP r0,#0x77  ;; pressed 'w' for white?
+    	CMP r0,#0x77  ;; pressed 'w' for white?
 	BNE lab4    ; go back to lab4
 	MOV r0,#0x260000  ;pin 17 , 18 ,21 =1== white
 	B turn_rgb   ; turn on the color
