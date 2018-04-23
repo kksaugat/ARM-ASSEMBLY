@@ -44,10 +44,10 @@ lab5
 	LDR r4,= toquit
 	BL output_string
 LOOP 
-       B LOOP
+       	B LOOP
 	 
 lab5_exit
-     LDR r4,=Quit
+     	 LDR r4,=Quit
 	 BL output_string
 	 LDMFD sp!,{lr}
 	 BX lr
