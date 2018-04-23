@@ -2,22 +2,22 @@
 	EXTERN lab5
 	EXPORT pin_connect_block_setup_for_uart0
 	EXPORT uart_init
-    EXPORT read_character
+   	EXPORT read_character
 	EXPORT output_character
 	EXPORT read_string
 	EXPORT output_string
 	EXPORT display_digit_on_7_seg
 	EXPORT setup_digitset
-    EXPORT 	seven_segment
-    EXPORT done_display	
-    EXPORT on_or_off 	
+        EXPORT 	seven_segment
+        EXPORT done_display	
+        EXPORT on_or_off 	
 	EXPORT clear_digits	
 U0LSR EQU 0x14			; UART0 Line Status Register
 
 U0THR EQU 0xE000C000
 
 
-PIODATA EQU 0x8         ; Offset to paralle
+PIODATA EQU 0x8         
   ;Pin block initialization                                                                      
 PINSEL0 EQU 0xE002C000
 IO0DIR  EQU 0xE0028008
@@ -36,8 +36,8 @@ digits_SET
         DCD 0x00009580  ; 2
         DCD 0x00008780  ; 3
         DCD 0x0000A300;   4
-		DCD 0x0000A680  ; 5
-	    DCD 0x0000B680  ; 6
+	DCD 0x0000A680  ; 5
+	DCD 0x0000B680  ; 6
         DCD 0x00000380  ; 7
         DCD 0x0000B780  ; 8
         DCD 0x0000A780  ; 9
@@ -59,12 +59,12 @@ LOOP1   BL read_character
 		CMP r0, #0x0D
 		BEQ END
 		STRB r0, [r4]
-        ADD r4,r4,#1		
+       	        ADD r4,r4,#1		
 		B LOOP1	
 END		MOV r0, #0x00
 		STRB r0, [r4]		
 		MOV r0, #0x0A
-		BL	output_character
+		BL output_character
 
 		LDMFD sp!,{r0,r4,lr}
 		BX lr				
@@ -73,12 +73,12 @@ output_string
 
 		STMFD sp!,{r0, lr}
 output_loop	LDRB r0,[r4]
-        ADD r4,r4,#1
+        	ADD r4,r4,#1
 		CMP r0, #0x00			
 		BEQ STOP				
 		BL output_character				
 		B output_loop
-STOP	LDMFD sp!, {r0, lr}
+STOP		LDMFD sp!, {r0, lr}
 		BX lr
 
 
@@ -86,7 +86,7 @@ read_character
 		
 		STMFD sp!,{r6-r7,lr}
 		LDR r6, =U0THR
-        LDR r9,=U0LSR
+        	LDR r9,=U0LSR
 read_loop	LDRB r7, [r6, r9]
 		AND r7, r7, #0x1
 		CMP r7, #0
@@ -100,8 +100,8 @@ output_character
 
 		STMFD sp!,{r7-r8,lr}
 		LDR r8, =U0THR
-        LDR r9,=U0LSR
-LOOP2	LDRB r7, [r8, r9]
+        	LDR r9,=U0LSR
+LOOP2		LDRB r7, [r8, r9]
 		AND r7, r7, #0x20
 		CMP r7, #0
 		BEQ LOOP2
@@ -133,15 +133,15 @@ uart_init
 
 
 setup_digitset
-      STMFD sp!,{lr}
-       LDR r4,=IO0DIR  ; address of IO0DIR ro r4
-       LDR r2,=0xB784    ; port 0 pin 2 then the segments pins to 1 
+      	   STMFD sp!,{lr}
+       	   LDR r4,=IO0DIR  ; address of IO0DIR ro r4
+       	   LDR r2,=0xB784    ; port 0 pin 2 then the segments pins to 1 
 	   STR r2,[r4]
 	   LDMFD sp!,{lr}
 	   BX lr
 
 display_digit_on_7_seg
-    STMFD SP!,{lr}    ; Store registers on stack
+    	STMFD SP!,{lr}    ; Store registers on stack
 	CMP r0,#0x71 ; did user press 'q' to quit
 	BEQ quit
 	CMP r0,#0x46
@@ -150,12 +150,12 @@ display_digit_on_7_seg
 	BLT _exit
 	CMP r0,#0x39    ; is the value less than 9?
 	BLE sub1 ; if its go to sub1
-    CMP r0,#0x41
+    	CMP r0,#0x41
 	BGE sub0
 	
 
 sub0
-    MOV r3,#0x1
+    	MOV r3,#0x1
 	SUB r0,r0,#0x41; if the values are'A' TO 'F' subtract by its ascii then add 10 to output the ascii
 	ADD r0,r0,#10     ;  (A = 0x41) so 0x41-0x41 + 10 = A and so on
 	BL done_display
@@ -173,23 +173,23 @@ _exit
 
 
 done_display
-    STMFD SP!,{lr,r4,r2}
-    MOV r8,#0
+    	STMFD SP!,{lr,r4,r2}
+    	MOV r8,#0
 	LDR r4,=IO0CLR ; load the base address
 	LDR r2,=0xB784
 	STR r2,[r4]
 	BL seven_segment  ; branch to display the digits accordingly
 	LDMFD  SP!, {lr,r4,r2} ; Restore regis
-    BX LR
+    	BX LR
 
 clear_digits
-    STMFD SP!,{lr,r1,r2}
-    MOV r8,#0
+    	STMFD SP!,{lr,r1,r2}
+    	MOV r8,#0
 	LDR r1,=IO0CLR ; load the base address
 	LDR r2,=0xB784
 	STR r2,[r1]
 	LDMFD  SP!, {lr,r1,r2} ; Restore regis
-    BX LR
+    	BX LR
 
 seven_segment
   STMFD SP!,{lr,r4,r2,r3}
@@ -206,30 +206,30 @@ seven_segment
 on_or_off
     
 	STMFD SP!, {lr,r0}
-    CMP r8, #0			         ; 0 for off ; 1 = 0n is it on?
+    	CMP r8, #0			         ; 0 for off ; 1 = 0n is it on?
 	BNE turn_off   ; if not go to turn off
 turn_on
-    MOV r8, #1		 ; 1 = 0n		
-   MOV r0, r7      
-    BL done_display2		; go to display the digits	
-    B exit
+    	MOV r8, #1		 ; 1 = 0n		
+   	MOV r0, r7      
+   	BL done_display2		; go to display the digits	
+   	B exit
 
 turn_off
 	MOV r8, #0				; 0 to turn off
 	BL clear_digits			; clear the digits
 
 exit
-    LDMFD SP!, {lr,r0}
+    	LDMFD SP!, {lr,r0}
 	BX lr
 
 done_display2
-    STMFD SP!,{lr,r4,r2}
-    MOV r8,#0
+    	STMFD SP!,{lr,r4,r2}
+    	MOV r8,#0
 	LDR r4,=IO0CLR ; load the base address
 	LDR r2,=0xB784
 	STR r2,[r4]
 	LDMFD  SP!, {lr,r4,r2} ; Restore regis
-    BX LR
+    	BX LR
 
 pin_connect_block_setup_for_uart0
 	STMFD sp!, {r0, r1, lr}
