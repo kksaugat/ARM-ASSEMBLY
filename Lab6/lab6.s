@@ -2,7 +2,6 @@
 	EXPORT lab6
 	EXPORT FIQ_Handler
 	EXPORT compare_digit
-	;IMPORT string_to_int
 	IMPORT output_string
 	IMPORT pin_connect_block_setup_for_gpio
 	IMPORT pin_connect_block_setup_for_uart0
@@ -10,16 +9,14 @@
 	IMPORT display_digit_on_7_seg
 	IMPORT output_character
 	IMPORT input_character
-	;IMPORT interrupt_init
-	;IMPORT write_register_to_uart
 	IMPORT multiplication
-	;IMPORT div_and_mod
+	
 prompt = "Lab #6 Working with Timers\n\rEnter 4 hexadecimal numbers and press enter\n\r",0
 exitmsg = "\n\rTerminating program...\n\r",0
 
 QUIT_PROMPT EQU 0x40000F04
 
-; TIMER USAGE: timer 0 is strictly for the delay function and is reset everytime it is called
+
 TIMER0 EQU 0xE0004008
 TICKS_PER_MS EQU 1843200
 T0TCR  EQU 0xE0004004
@@ -55,11 +52,9 @@ lab6
 		BL enable_timers
 		LDR r4, =prompt
 		BL output_string
-	;BL interrupt_init
-		LDR r0, =STRING_BASE_ADDRESS
+	        LDR r0, =STRING_BASE_ADDRESS
 		BL input_character
 		BL output_character
-		;BL string_to_int
 		BL compare_digit
 		MOV r6,r2;
 		LDR r0, =STRING_BASE_ADDRESS
@@ -83,14 +78,12 @@ lab6
 		MOV r10,r0;
 		CMP r10, #0x0D
 		BEQ SEVENSEG
-
-
-		LDMFD sp!,{lr}
+                LDMFD sp!,{lr}
 		BX lr
 
 compare_digit
 	
-		;STMFD sp!, {r0,r1,r2}
+		
 		CMP r0, #0x30	; checking for '0'
 		BNE NOTZERO
 		MOV r2, #0
@@ -158,95 +151,63 @@ NOTE
 
 NOTF	
 		CMP r0, #0x71 ; checking for 'q'
-		;LDMFD sp!, {r0,r1,r2}
 		BX lr
 
 
 SEVENSEG
 	STMFD sp!, {r0,r1,r2,r3,r4}
-	
-	;MOV r0, #5
-	;BL delay
-	
-	
-	
-	;MOV r3, #0x1	;COPY VALUE TO BE PASSED INTO FIRST SEV SEG DISPLAY
 	MOV r0, r6
 	LDR r2, =IO0DIR
 	
 	LDR r1, =TURN_ON_FIRST_DIGIT	; TURNING ON THE FIRST SEV SEG DISPLAY
 	BL display_digit_on_7_seg
-    STR r1, [r2]
+        STR r1, [r2]
 	
 	MOV r0, #5
-    BL delay
+        BL delay
 	LDR r2, =IO0DIR
 	
 	LDR r1, =TURN_OFF_FIRST_DIGIT	; TURNING OFF THE FIRST SEV SEG DISPLAY
-    STR r1, [r2]
-	;MOV r3, #0x2 		;COPY VALUE TO BE PASSED INTO SECOND SEV SEG DISPLAY
+        STR r1, [r2]
 	MOV r0, r7
 	
 
-    LDR r2, =IO0DIR
+        LDR r2, =IO0DIR
 	LDR r1, =TURN_ON_SECOND_DIGIT	; TURNING ON THE SECOND SEV SEG DISPLAY
 	BL display_digit_on_7_seg
-    STR r1, [r2]
-	
-	;BL display_digit_on_7_seg
+        STR r1, [r2]
 	MOV r0, #5
-    BL delay
+        BL delay
 	LDR r2, =IO0DIR
 	
 	LDR r1, =TURN_OFF_SECOND_DIGIT	; TURNING OFF THE FIRST SEV SEG DISPLAY
-    STR r1, [r2]
-	;MOV r3, #0x3 		;COPY VALUE TO BE PASSED INTO SECOND SEV SEG DISPLAY
+        STR r1, [r2]
 	MOV r0, r8
-	
 	LDR r2, =IO0DIR
 	LDR r1, =TURN_ON_THIRD_DIGIT	; TURNING ON THE SECOND SEV SEG DISPLAY
 	BL display_digit_on_7_seg
-    STR r1, [r2]
-	
-	;BL display_digit_on_7_seg
+        STR r1, [r2]
 	MOV r0, #5
-    BL delay
+        BL delay
 	LDR r2, =IO0DIR
 	
 	LDR r1, =TURN_OFF_THIRD_DIGIT	; TURNING OFF THE FIRST SEV SEG DISPLAY
-    STR r1, [r2]
-	 ;MOV r3, #0x4 		;COPY VALUE TO BE PASSED INTO SECOND SEV SEG DISPLAY
+        STR r1, [r2]
 	MOV r0, r9
 	
 	LDR r2, =IO0DIR
 	LDR r1, =TURN_ON_FOURTH_DIGIT	; TURNING ON THE SECOND SEV SEG DISPLAY
 	BL display_digit_on_7_seg
-    STR r1, [r2]
+        STR r1, [r2]
 	
 	MOV r0, #5
-    BL delay
+        BL delay
 	LDR r2, =IO0DIR
 	
 	LDR r1, =TURN_OFF_FOURTH_DIGIT	; TURNING OFF THE FIRST SEV SEG DISPLAY
-    STR r1, [r2]
-	
-	
-	
-	
-	
-	
-	
-	;BL enable_timer
-	
+        STR r1, [r2]
 	B SEVENSEG
-
-
-
-
-
-
-
-	LDMFD sp!, {r0,r1,r2,r3,r4}
+        LDMFD sp!, {r0,r1,r2,r3,r4}
 	
 	
 	
@@ -336,7 +297,7 @@ DELAYLOOP
 	LDR r2, [r1]
 	CMP r2, r0
 	BLT DELAYLOOP
-    LDMFD SP!, {lr,r0,r1,r2}
+   	 LDMFD SP!, {lr,r0,r1,r2}
 	BX lr
 
 FIQ_Exit
