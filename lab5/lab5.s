@@ -1,14 +1,14 @@
     AREA interrupts, CODE, READWRITE
-	EXPORT lab5
-	EXPORT FIQ_Handler
-	EXTERN pin_connect_block_setup_for_uart0
+    EXPORT lab5
+    EXPORT FIQ_Handler
+    EXTERN pin_connect_block_setup_for_uart0
     EXTERN uart_init
     EXTERN read_character
     EXTERN output_character
     EXTERN read_string
     EXTERN output_string
     EXTERN seven_segment	
-	EXTERN setup_digitset
+    EXTERN setup_digitset
     EXTERN display_digit_on_7_seg		
     EXTERN done_display	
     EXTERN on_or_off	
@@ -36,7 +36,7 @@ lab5
 	BL interrupt_init   
 	MOV r8,#1	
 	LDR  r4,=prompt
-    BL  output_string
+        BL  output_string
 	LDR r4,=ascii
 	BL output_string
 	LDR r4,=interrupt
@@ -112,7 +112,7 @@ EINT1			; Check for EINT1 interrupt
 		BEQ Uart0          
 		BL on_or_off
 		ORR r1,r1,#2
-        STR r1,[r0] 
+        	STR r1,[r0] 
 		B FIQ_Exit
 		
 		
@@ -130,7 +130,7 @@ FIQ_Exit
 		LDMFD SP!, {r0-r12, lr}
 		SUBS pc, lr, #4
 
-	     END   
+	    	 END   
 	
             
         		  
